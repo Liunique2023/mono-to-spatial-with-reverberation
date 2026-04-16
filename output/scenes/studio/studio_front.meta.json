@@ -1,0 +1,76 @@
+{
+  "room": {
+    "room_dim_xyz_m": [
+      4.0,
+      3.0,
+      2.8
+    ],
+    "room_materials": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "room_volume_m3": 33.599999999999994,
+    "room_surface_area_m2": 63.199999999999996
+  },
+  "listener": {
+    "head_pos_xyz_m": [
+      2.0,
+      1.5,
+      1.5
+    ],
+    "head_azim_deg": 0.0
+  },
+  "source": {
+    "src_pos_xyz_m": [
+      3.0,
+      1.5,
+      1.5
+    ],
+    "src_dist_m": 1.0,
+    "src_azim_deg_rel_head": 0.0,
+    "src_elev_deg_rel_head": 0.0
+  },
+  "doa": {
+    "azim_deg_rel_head": 0.0,
+    "elev_deg_rel_head": 0.0,
+    "azim_deg_world": 0.0,
+    "elev_deg_world": 0.0
+  },
+  "rt60": {
+    "sabine": {
+      "freq_hz": [
+        125.0,
+        250.0,
+        500.0,
+        1000.0,
+        2000.0,
+        4000.0
+      ],
+      "rt60_bands_sec": [
+        2.853164556962026,
+        2.853164556962026,
+        2.853164556962026,
+        2.139873417721519,
+        1.711898734177215,
+        1.2227848101265824
+      ],
+      "rt60_mid_sec": 2.2349789029535865,
+      "formula": "sabine",
+      "sound_speed_m_per_s": 344.5
+    },
+    "from_brir": {
+      "rt60_from_brir_sec": 1.0813137597373466,
+      "rt60_method": "T30",
+      "dynamic_range_db": 160.0,
+      "fit_slope_db_per_sec": -55.48805742985656
+    }
+  },
+  "simulator": {
+    "sr_hz": 44100,
+    "sound_speed_m_per_s": 344.5
+  }
+}

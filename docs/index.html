@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BRIR Demo | Data Simulation Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f7f4ef;
+        --panel: #fffdf9;
+        --ink: #1f2a2b;
+        --muted: #5f6d6f;
+        --brand: #0d9488;
+        --brand-deep: #0f766e;
+        --accent: #c2410c;
+        --line: #d6d3cd;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Noto Sans SC", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 10% 10%, #f9e8dc 0%, transparent 38%),
+          radial-gradient(circle at 90% 0%, #dff1ef 0%, transparent 40%),
+          var(--bg);
+      }
+
+      .wrap {
+        width: min(1180px, 92vw);
+        margin: 0 auto;
+        padding: 40px 0 56px;
+      }
+
+      .hero {
+        background: linear-gradient(130deg, #0f766e 0%, #0d9488 60%, #159b84 100%);
+        color: #ecfeff;
+        border-radius: 22px;
+        padding: 30px 28px;
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.12);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+        letter-spacing: 0.02em;
+      }
+
+      .hero p {
+        margin: 14px 0 0;
+        max-width: 880px;
+        line-height: 1.75;
+      }
+
+      .badge-row {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.86rem;
+      }
+
+      .section-title {
+        margin: 34px 0 14px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.35rem;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        color: var(--brand-deep);
+        font-size: 1.02rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.68;
+        font-size: 0.94rem;
+      }
+
+      .scene-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .scene-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .scene-grid {
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .scene-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 12px 14px;
+      }
+
+      .scene-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: baseline;
+        margin-bottom: 8px;
+      }
+
+      .scene-title strong {
+        font-size: 0.95rem;
+      }
+
+      .scene-title span {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .track {
+        border-top: 1px dashed #d7d1c7;
+        padding-top: 8px;
+        margin-top: 8px;
+      }
+
+      .track-label {
+        color: var(--accent);
+        margin: 0 0 4px;
+        font-size: 0.83rem;
+      }
+
+      audio {
+        width: 100%;
+        height: 36px;
+      }
+
+      .note {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      footer {
+        margin-top: 34px;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      @media (max-width: 960px) {
+        .cards {
+          grid-template-columns: 1fr;
+        }
+
+        .scene-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="hero">
+        <h1>双耳空间语音 DEMO | 数据仿真模块</h1>
+        <p>
+          本页面用于展示 21 种场景下生成的双耳空间音频样本。核心流程是：采样配置参数，联合仿真
+          BRIR，再将单通道语音与 BRIR 卷积，得到目标双耳空间声，用于模型训练。
+        </p>
+        <div class="badge-row">
+          <span class="badge">21 场景</span>
+          <span class="badge">42 双耳样本</span>
+          <span class="badge">BRIR 联合仿真</span>
+          <span class="badge">GitHub Pages</span>
+        </div>
+      </section>
+
+      <h2 class="section-title">二、数据仿真模块</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>2.1 配置参数采样（cfg control）</h3>
+          <p>
+            每轮数据生成采样三类参数：房间信息（几何尺寸与六面材质，决定 RT60
+            等混响属性）、方位信息（方位角/俯仰角/距离）和个体信息（HRTF
+            个体标识）。参数可随机采样以最大化覆盖，也可按策略分布强化关键场景。
+          </p>
+        </article>
+        <article class="card">
+          <h3>2.2 BRIR 联合仿真（room simu tools）</h3>
+          <p>
+            先基于房间尺寸与材质构建虚拟声场，再按声源与听者位置计算直达声、多阶反射与散射路径。对每条路径按到达方向施加对应
+            HRTF，最终叠加得到完整 BRIR，实现“方位 + 混响”的物理一致性耦合。
+          </p>
+        </article>
+        <article class="card">
+          <h3>2.3 目标空间声生成（convolve）</h3>
+          <p>
+            将单通道语音分别与左右耳 BRIR 卷积，得到双通道目标空间声。该信号作为训练真值，携带完整的方位特征、房间混响特征和个体
+            HRTF 特征。
+          </p>
+        </article>
+      </div>
+
+      <h2 class="section-title">音频试听</h2>
+      <div class="scene-head">
+        <p>建议佩戴耳机试听，便于感知空间方向与混响差异。</p>
+      </div>
+      <div class="scene-grid" id="scene-grid"></div>
+      <p class="note">注：页面中的音频来自仓库目录 rendered_zhengxue。</p>
+
+      <footer>
+        BRIR Demo Page | Generated for project showcase
+      </footer>
+    </div>
+
+    <script>
+      const scenes = [
+        {
+          id: "01-anechoic_chamber",
+          cn: "消声室",
+          files: [
+            "az045_el+00_d1.40_binaural.wav",
+            "az300_el+00_d1.40_binaural.wav",
+          ],
+        },
+        {
+          id: "02-recording_studio",
+          cn: "录音棚",
+          files: [
+            "az000_el+00_d1.50_binaural.wav",
+            "az345_el+00_d1.50_binaural.wav",
+          ],
+        },
+        {
+          id: "03-car_interior",
+          cn: "车内",
+          files: [
+            "az120_el+00_d0.50_binaural.wav",
+            "az135_el+00_d0.50_binaural.wav",
+          ],
+        },
+        {
+          id: "04-small_bedroom",
+          cn: "小卧室",
+          files: [
+            "az060_el+00_d1.20_binaural.wav",
+            "az105_el+00_d1.20_binaural.wav",
+          ],
+        },
+        {
+          id: "05-office",
+          cn: "办公室",
+          files: [
+            "az045_el+00_d1.50_binaural.wav",
+            "az345_el+00_d1.50_binaural.wav",
+          ],
+        },
+        {
+          id: "06-living_room",
+          cn: "客厅",
+          files: [
+            "az315_el+00_d2.00_binaural.wav",
+            "az345_el+00_d2.00_binaural.wav",
+          ],
+        },
+        {
+          id: "07-small_meeting_room",
+          cn: "小会议室",
+          files: [
+            "az030_el+00_d2.00_binaural.wav",
+            "az255_el+00_d2.00_binaural.wav",
+          ],
+        },
+        {
+          id: "08-classroom",
+          cn: "教室",
+          files: [
+            "az195_el+00_d3.00_binaural.wav",
+            "az270_el+00_d2.65_binaural.wav",
+          ],
+        },
+        {
+          id: "09-small_concert_hall",
+          cn: "小音乐厅",
+          files: [
+            "az000_el+00_d4.00_binaural.wav",
+            "az015_el+00_d4.00_binaural.wav",
+          ],
+        },
+        {
+          id: "10-open_office",
+          cn: "开放办公区",
+          files: [
+            "az030_el+00_d3.00_binaural.wav",
+            "az090_el+00_d3.00_binaural.wav",
+          ],
+        },
+        {
+          id: "11-bathroom_tile",
+          cn: "瓷砖浴室",
+          files: [
+            "az105_el+00_d1.38_binaural.wav",
+            "az240_el+00_d0.88_binaural.wav",
+          ],
+        },
+        {
+          id: "12-medium_theater",
+          cn: "中型剧院",
+          files: [
+            "az000_el+00_d5.00_binaural.wav",
+            "az285_el+00_d5.00_binaural.wav",
+          ],
+        },
+        {
+          id: "13-indoor_gymnasium",
+          cn: "室内体育馆",
+          files: [
+            "az090_el+00_d5.00_binaural.wav",
+            "az255_el+00_d5.00_binaural.wav",
+          ],
+        },
+        {
+          id: "14-large_concert_hall",
+          cn: "大音乐厅",
+          files: [
+            "az300_el+00_d5.00_binaural.wav",
+            "az330_el+00_d5.00_binaural.wav",
+          ],
+        },
+        {
+          id: "15-corridor_stairwell",
+          cn: "走廊楼梯间",
+          files: [
+            "az255_el+00_d1.00_binaural.wav",
+            "az330_el+00_d1.93_binaural.wav",
+          ],
+        },
+        {
+          id: "16-tunnel_parking",
+          cn: "地下通道停车场",
+          files: [
+            "az105_el+00_d2.27_binaural.wav",
+            "az225_el+00_d3.00_binaural.wav",
+          ],
+        },
+        {
+          id: "17-cathedral",
+          cn: "大教堂",
+          files: [
+            "az210_el+00_d5.00_binaural.wav",
+            "az270_el+00_d5.00_binaural.wav",
+          ],
+        },
+        {
+          id: "18-large_stone_church",
+          cn: "大型石质教堂",
+          files: [
+            "az000_el+00_d5.00_binaural.wav",
+            "az120_el+00_d5.00_binaural.wav",
+          ],
+        },
+        {
+          id: "19-outdoor_open",
+          cn: "室外开阔",
+          files: [
+            "az075_el+00_d3.00_binaural.wav",
+            "az330_el+00_d3.00_binaural.wav",
+          ],
+        },
+        {
+          id: "20-urban_street",
+          cn: "城市街道",
+          files: [
+            "az150_el+00_d3.00_binaural.wav",
+            "az195_el+00_d3.00_binaural.wav",
+          ],
+        },
+        {
+          id: "21-forest",
+          cn: "森林",
+          files: [
+            "az060_el+00_d5.00_binaural.wav",
+            "az120_el+00_d5.00_binaural.wav",
+          ],
+        },
+      ];
+
+      const grid = document.getElementById("scene-grid");
+
+      scenes.forEach((scene) => {
+        const card = document.createElement("article");
+        card.className = "scene-card";
+
+        const title = document.createElement("div");
+        title.className = "scene-title";
+        title.innerHTML = `<strong>${scene.cn}</strong><span>${scene.id}</span>`;
+        card.appendChild(title);
+
+        scene.files.forEach((file, idx) => {
+          const track = document.createElement("div");
+          track.className = "track";
+
+          const label = document.createElement("p");
+          label.className = "track-label";
+          label.textContent = idx === 0 ? "样本 A" : "样本 B";
+
+          const audio = document.createElement("audio");
+          audio.controls = true;
+          audio.preload = "none";
+          audio.src = `../rendered_zhengxue/${scene.id}/${file}`;
+
+          track.appendChild(label);
+          track.appendChild(audio);
+          card.appendChild(track);
+        });
+
+        grid.appendChild(card);
+      });
+    </script>
+  </body>
+</html>

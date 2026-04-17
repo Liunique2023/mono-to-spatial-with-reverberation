@@ -421,6 +421,8 @@
       ];
 
       const grid = document.getElementById("scene-grid");
+      const audioBase =
+        "https://raw.githubusercontent.com/Liunique2023/mono-to-spatial-with-reverberation/main/rendered_zhengxue";
 
       scenes.forEach((scene) => {
         const card = document.createElement("article");
@@ -442,7 +444,7 @@
           const audio = document.createElement("audio");
           audio.controls = true;
           audio.preload = "none";
-          audio.src = `../rendered_zhengxue/${scene.id}/${file}`;
+          audio.src = `${audioBase}/${scene.id}/${encodeURIComponent(file)}`;
 
           track.appendChild(label);
           track.appendChild(audio);
